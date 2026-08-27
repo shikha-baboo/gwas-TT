@@ -1,4 +1,3 @@
-import gradio as gr
 import pandas as pd
 import numpy as np
 import matplotlib
@@ -2840,124 +2839,6 @@ def run_compare_models(state, chosen_models, mode, top_n, cmp_w, cmp_h, cmp_fs):
     return img, df, fig_path, table_path
 
 
-# ─────────────────────── CSS ──────────────────────────────────────────────────────
-CSS = """
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --ink:        #1A1D29;
-  --ink-soft:   #565D75;
-  --ink-faint:  #8A90A6;
-  --line:       #E1E4EC;
-  --line-soft:  #EDEFF4;
-  --paper:      #FFFFFF;
-  --canvas:     #F7F8FB;
-  --accent:     #2B4C7E;
-  --accent-soft:#EEF2F8;
-  --mono:       'JetBrains Mono', monospace;
-}
-
-* { box-sizing: border-box; }
-
-body, .gradio-container {
-  background: var(--canvas) !important;
-  font-family: 'Inter', sans-serif !important;
-  color: var(--ink) !important;
-  font-size: 14px !important;
-}
-.gradio-container { max-width: 1600px !important; margin: 0 auto !important; }
-
-/* ── Masthead ───────────────────────────────────────────────────────── */
-.gwas-header {
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-bottom: 3px solid var(--accent);
-  border-radius: 6px;
-  padding: 20px 26px;
-  margin-bottom: 18px;
-}
-.gwas-header h1 {
-  font-family: 'Source Serif 4', serif !important;
-  font-size: 21px !important; font-weight: 700 !important;
-  color: var(--ink) !important; margin: 0 0 4px 0 !important; letter-spacing: -0.2px;
-}
-.gwas-header p { color: var(--ink-soft) !important; font-size: 12.5px !important; margin: 2px 0 !important; }
-
-/* ── Model color chips (match MODEL_COLORS in Python) ─────────────────
-   Kept as small solid swatches — functional legend, not decoration. */
-.model-chip{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:4px;font-size:11px;font-weight:600;color:#fff;margin:2px 4px 2px 0;font-family:var(--mono);}
-.chip-OLS{background:#3E7BD6}.chip-MLM{background:#14B8A6}.chip-EMMAX{background:#DB4C8C}.chip-FarmCPU{background:#5FA624}.chip-GEMMA{background:#B054E0}.chip-BLINK{background:#E0972E}.chip-mrMLM{background:#2AB0C5}.chip-FASTmrMLM{background:#D65B3E}
-
-/* ── Section headers — one consistent style, no icons ─────────────── */
-.section-title{
-  font-size:11.5px!important; font-weight:700!important; color:var(--ink)!important;
-  text-transform:uppercase; letter-spacing:0.5px;
-  padding:0 0 8px 0; margin:0 0 12px 0; border-bottom:1px solid var(--line);
-}
-.info-box{background:var(--accent-soft);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:4px;padding:10px 14px;margin:8px 0;font-size:12px;color:var(--ink-soft);line-height:1.55;}
-.info-box.warn{border-left-color:#B45309;}
-.info-box.tip{border-left-color:#0F766E;}
-
-/* ── Cards (Gradio groups/panels) — flat, no shadow ────────────────── */
-.gr-panel, .gr-box, .block, .panel, .form { background:var(--paper)!important; border:1px solid var(--line)!important; border-radius:6px!important; box-shadow:none!important; }
-.gwas-card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:18px 20px;margin-bottom:14px;}
-
-/* ── Text / inputs — consistent, quiet ─────────────────────────────── */
-label, .label-wrap span { color:var(--ink-soft)!important; font-size:11.5px!important; font-weight:600!important; text-transform:uppercase!important; letter-spacing:0.3px!important; }
-input, textarea, select { background:var(--paper)!important; color:var(--ink)!important; border:1px solid var(--line)!important; border-radius:4px!important; font-size:13px!important; }
-input:focus, textarea:focus, select:focus { border-color:var(--accent)!important; }
-
-/* ── Buttons — flat, single accent, no gradients ───────────────────── */
-button.primary { background:var(--accent)!important; border:1px solid var(--accent)!important; border-radius:5px!important; color:#FFFFFF!important; font-weight:600!important; font-size:14px!important; padding:12px 24px!important; box-shadow:none!important; width:100%!important; letter-spacing:0.2px; }
-button.primary:hover{ background:#1F3A61!important; }
-button.secondary{ background:var(--paper)!important; border:1px solid var(--accent)!important; border-radius:5px!important; color:var(--accent)!important; font-weight:600!important; box-shadow:none!important; }
-button.secondary:hover{ background:var(--accent-soft)!important; }
-
-/* ── Tabs — flat underline style, identical across all tab levels ─── */
-.tab-nav { background:transparent!important; border-radius:0!important; padding:0!important; border:none!important; border-bottom:1px solid var(--line)!important; overflow-x:auto!important; }
-.tab-nav button { color:var(--ink-faint)!important; font-size:13px!important; font-weight:600!important; border-radius:0!important; padding:10px 16px!important; border:none!important; border-bottom:2px solid transparent!important; background:transparent!important; white-space:nowrap!important; margin-bottom:-1px!important; }
-.tab-nav button.selected { color:var(--accent)!important; border-bottom:2px solid var(--accent)!important; background:transparent!important; box-shadow:none!important; }
-.tab-nav button:hover { color:var(--ink)!important; }
-
-.summary-box textarea { font-family:var(--mono)!important; font-size:11.5px!important; background:var(--canvas)!important; line-height:1.5; }
-::-webkit-scrollbar { width:6px; height:6px; }
-::-webkit-scrollbar-thumb { background:var(--line); border-radius:4px; }
-.cfg-panel { background:var(--canvas)!important; border-radius:5px!important; padding:12px!important; border:1px solid var(--line)!important; }
-
-/* ── Compare-tab overlap badges ─────────────────────────────────────── */
-.overlap-pill{display:inline-block;padding:2px 9px;border-radius:4px;background:var(--accent-soft);color:var(--accent);font-weight:600;font-size:11.5px;border:1px solid var(--line);}
-
-/* ── Checkbox / Radio groups: selection state always visible, flat ─── */
-input[type="checkbox"], input[type="radio"] {
-  width:16px!important; height:16px!important;
-  accent-color:var(--accent)!important; cursor:pointer!important;
-}
-.gradio-container label:has(> input[type="checkbox"]),
-.gradio-container label:has(> input[type="radio"]) {
-  display:inline-flex!important; align-items:center!important; gap:7px!important;
-  background:var(--paper)!important; border:1px solid var(--line)!important;
-  border-radius:5px!important; padding:6px 12px!important; margin:3px!important;
-  transition:background .12s ease, border-color .12s ease!important;
-  cursor:pointer!important;
-}
-.gradio-container label:has(> input[type="checkbox"]:hover),
-.gradio-container label:has(> input[type="radio"]:hover) {
-  border-color:var(--accent)!important;
-}
-.gradio-container label:has(> input[type="checkbox"]:checked),
-.gradio-container label:has(> input[type="radio"]:checked) {
-  background:var(--accent)!important;
-  border-color:var(--accent)!important;
-  box-shadow:none!important;
-}
-.gradio-container label:has(> input[type="checkbox"]:checked) span,
-.gradio-container label:has(> input[type="radio"]:checked) span {
-  color:#FFFFFF!important; font-weight:600!important;
-}
-
-/* ── Accordion headers — match section-title, no icons/emoji ──────── */
-.label-wrap { font-weight:600!important; }
-"""
 
 SAMPLE_DATA = """ID,Phenotype,chr1_134521_SNP1,chr1_134810_SNP2,chr1_178766_SNP3,chr1_210328_SNP4
 chromosome,1,1,1,1
@@ -2971,332 +2852,384 @@ IRRI-25,20,2,0,2,0
 IRRI-34,37,0,0,0,0
 IRRI-42,30.67,0,0,0,0
 IRRI-50,22,0,0,0,2"""
+# =============================================================================
+# SHINY FOR PYTHON USER INTERFACE
+# =============================================================================
+# The GWAS/statistical engine above is intentionally unchanged.  Only the
+# Gradio presentation/event layer has been replaced with Shiny for Python.
 
-# ─────────────────────── GRADIO INTERFACE ────────────────────────────────────────
-with gr.Blocks(css=CSS, title="GWAS Analysis Pipeline", theme=gr.themes.Base()) as demo:
+from types import SimpleNamespace
+from pathlib import Path
+from shiny import App, Inputs, Outputs, Session, reactive, render, ui, req
 
-    cache_state = gr.State({})  # holds last run's results for live recolor + Compare tab
+SHINY_CSS = """
+:root { --ink:#1A1D29; --ink-soft:#565D75; --line:#E1E4EC; --paper:#FFFFFF;
+        --canvas:#F7F8FB; --accent:#2B4C7E; }
+body { background:var(--canvas); color:var(--ink); font-family:Inter,Arial,sans-serif; }
+.gwas-header { background:var(--paper); border:1px solid var(--line);
+  border-bottom:3px solid var(--accent); border-radius:6px; padding:20px 26px; margin-bottom:18px; }
+.gwas-header h1 { margin:0 0 4px 0; font-size:25px; font-weight:700; }
+.gwas-header p { color:var(--ink-soft); font-size:13px; margin:3px 0; }
+.section-title { font-size:12px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.5px; padding-bottom:8px; margin-bottom:12px; border-bottom:1px solid var(--line); }
+.info-box { background:#EEF2F8; border:1px solid var(--line); border-left:3px solid var(--accent);
+  border-radius:4px; padding:10px 14px; margin:8px 0; font-size:12px; line-height:1.5; }
+.card { background:var(--paper); border:1px solid var(--line); border-radius:6px; padding:18px; margin-bottom:14px; }
+.model-chip { display:inline-block; padding:3px 9px; border-radius:4px; color:#fff; font-size:11px; font-weight:600; margin:2px; }
+.chip-OLS{background:#3E7BD6}.chip-MLM{background:#14B8A6}.chip-EMMAX{background:#DB4C8C}
+.chip-FarmCPU{background:#5FA624}.chip-GEMMA{background:#B054E0}.chip-BLINK{background:#E0972E}
+.chip-mrMLM{background:#2AB0C5}.chip-FASTmrMLM{background:#D65B3E}
+.summary-box { background:#F7F8FB; border:1px solid var(--line); border-radius:5px;
+  padding:14px; white-space:pre-wrap; font-family:monospace; font-size:12px; max-height:760px; overflow:auto; }
+.plot-box { background:#fff; border:1px solid var(--line); border-radius:6px; padding:10px; margin-bottom:14px; }
+.shiny-output-error { color:#A00000; }
+button.btn-primary { background:#2B4C7E; border-color:#2B4C7E; }
+"""
 
-    gr.HTML("""<div class="gwas-header">
-      <h1>GWAS Analysis Pipeline</h1>
-      <p>OLS &nbsp;·&nbsp; MLM &nbsp;·&nbsp; EMMAX &nbsp;·&nbsp; FarmCPU &nbsp;·&nbsp; GEMMA &nbsp;·&nbsp; BLINK &nbsp;·&nbsp; mrMLM &nbsp;·&nbsp; FASTmrMLM</p>
-      <p style="font-size:11.5px;">Bonferroni and suggestive thresholds on every plot &nbsp;·&nbsp; live Manhattan recolor &nbsp;·&nbsp; cross-model MTA comparison</p>
-    </div>
-    """)
+# Helpers to make the UI readable.
+def input_color(id, label, value):
+    # Shiny core has no dedicated color-picker input; HTML color input is used
+    # as a normal Shiny text-compatible value through a small custom input.
+    # The companion text field is the reliable server-side value.
+    return ui.input_text(id, label, value=value, placeholder="#RRGGBB")
 
-    with gr.Tabs():
-        # ══════════════════════ TAB 1 — DATA & MODELS ══════════════════════
-        with gr.Tab("1. Data & Models"):
-            with gr.Row(equal_height=False):
-                with gr.Column(scale=1, min_width=320):
-                    with gr.Group(elem_classes=["gwas-card"]):
-                        gr.HTML('<div class="section-title">Data Input</div>')
-                        file_in  = gr.File(label="Upload CSV / TSV / TXT", file_types=[".csv",".tsv",".txt"])
-                        text_in  = gr.Textbox(label="Or paste CSV data", lines=6, value=SAMPLE_DATA)
+def slider(id, label, lo, hi, value, step):
+    return ui.input_slider(id, label, min=lo, max=hi, value=value, step=step)
 
-                    with gr.Group(elem_classes=["gwas-card"]):
-                        gr.HTML('<div class="section-title">Model Selection</div>')
-                        gr.HTML(
-                            '<div class="info-box">'
-                            + "".join(f'<span class="model-chip chip-{m}">{m}</span>' for m in ALL_MODELS)
-                            + '<br><span style="font-size:11px">Colors match every plot legend '
-                              'and the Compare-Models tab.</span></div>'
-                        )
-                        model_sel = gr.CheckboxGroup(
+def card(*children):
+    return ui.div(*children, class_="card")
+
+def chips():
+    return ui.HTML("".join(f'<span class="model-chip chip-{m}">{m}</span>' for m in ALL_MODELS))
+
+app_ui = ui.page_fluid(
+    ui.tags.style(SHINY_CSS),
+    ui.div(
+        ui.h1("GWAS Analysis Pipeline"),
+        ui.p("OLS · MLM · EMMAX · FarmCPU · GEMMA · BLINK · mrMLM · FASTmrMLM"),
+        ui.p("Bonferroni and suggestive thresholds on every plot · live Manhattan recolor · cross-model MTA comparison"),
+        class_="gwas-header",
+    ),
+    ui.navset_tab(
+        ui.nav_panel(
+            "1. Data & Models",
+            ui.layout_columns(
+                ui.column(4,
+                    card(
+                        ui.div("Data Input", class_="section-title"),
+                        ui.input_file("file_in", "Upload CSV / TSV / TXT", accept=[".csv", ".tsv", ".txt"]),
+                        ui.input_text_area("text_in", "Or paste CSV data", value=SAMPLE_DATA, rows=8),
+                    ),
+                    card(
+                        ui.div("Model Selection", class_="section-title"), chips(),
+                        ui.p("Colors match every plot legend and the Compare Models tab."),
+                        ui.input_checkbox_group("model_sel", "Select models to run",
                             choices=ALL_MODELS,
-                            value=["OLS", "MLM", "EMMAX", "FarmCPU", "GEMMA"],
-                            label="Select models to run (BLINK / mrMLM / FASTmrMLM are slower, multi-locus methods)")
-                        maf_thr  = gr.Slider(0, 0.5, 0.05, 0.01, label="MAF Threshold")
-                        top_n_sl = gr.Slider(5, 50, 15, 1,
-                            label="Fallback Top-N (used only if the LOD threshold can't be computed)")
-                        n_perm = gr.Slider(20, 200, 100, 10,
-                            label="Permutations for LOD threshold (Churchill & Doerge)")
-                        gr.HTML(
-                            '<div class="info-box" style="font-size:11px">'
-                            'Markers are highlighted as MTAs when they pass the LOD threshold — '
-                            'not a fixed count. More permutations give a more stable threshold '
-                            'but take longer to compute.</div>'
-                        )
-                        gr.HTML('<div class="section-title">Significance &amp; MTA Selection</div>')
-                        lod_thr_manual = gr.Slider(0, 10, 0, 0.1,
-                            label="Manual LOD threshold (0 = automatic, from permutations above)")
-                        pve_thr = gr.Slider(0, 100, 0, 1,
-                            label="Minimum PVE % (0 = off — combined with the LOD threshold)")
-                        run_btn  = gr.Button("Run Complete GWAS Pipeline", variant="primary")
+                            selected=["OLS", "MLM", "EMMAX", "FarmCPU", "GEMMA"]),
+                        slider("maf_thr", "MAF Threshold", 0, .5, .05, .01),
+                        slider("top_n_sl", "Fallback Top-N", 5, 50, 15, 1),
+                        slider("n_perm", "Permutations for LOD threshold", 20, 200, 100, 10),
+                        ui.div("Markers are highlighted as MTAs when they pass the LOD threshold. More permutations give a more stable threshold but take longer.", class_="info-box"),
+                        ui.div("Significance & MTA Selection", class_="section-title"),
+                        slider("lod_thr_manual", "Manual LOD threshold (0 = automatic)", 0, 10, 0, .1),
+                        slider("pve_thr", "Minimum PVE % (0 = off)", 0, 100, 0, 1),
+                        ui.input_action_button("run_btn", "Run Complete GWAS Pipeline", class_="btn-primary"),
+                    ),
+                    card(
+                        ui.div("Downloads", class_="section-title"),
+                        ui.download_button("excel_dl", "Download Excel results"),
+                        ui.download_button("zip_dl", "Download all plots (ZIP)"),
+                        ui.download_button("summary_dl", "Download summary (TXT)"),
+                    ),
+                ),
+                ui.column(8,
+                    card(
+                        ui.div("Analysis Summary + Threshold Explanations", class_="section-title"),
+                        ui.output_text_verbatim("summary_out"),
+                    )
+                ),
+                col_widths=[4,8], gap="20px",
+            ),
+        ),
+        ui.nav_panel(
+            "2. Cofactors / Advanced",
+            ui.div("Left group affects multi-locus models (FarmCPU, BLINK, mrMLM, FASTmrMLM). Kinship-PC covariates are used by MLM, mrMLM, FASTmrMLM and GEMMA when selected.", class_="info-box"),
+            ui.layout_columns(
+                card(
+                    ui.div("FarmCPU / BLINK Pseudo-QTN Iteration", class_="section-title"),
+                    slider("iter_max_iter", "Max FEM/REM iterations", 2, 15, 8, 1),
+                    slider("farmcpu_bin_size", "FarmCPU bin size (bp)", 100000, 5000000, 1000000, 100000),
+                    slider("blink_ld_r2", "BLINK LD r² pruning cutoff", .1, .99, .7, .01),
+                ),
+                card(
+                    ui.div("mrMLM / FASTmrMLM Two-Stage Screening", class_="section-title"),
+                    slider("mrmlm_screen_thresh", "Stage-1 screening p-value", .001, .05, .01, .001),
+                    slider("mrmlm_max_candidates", "Max candidate QTNs", 5, 40, 20, 1),
+                    slider("mrmlm_drop_thresh", "Stage-2 drop threshold", .01, .2, .05, .01),
+                ),
+                col_widths=[6,6], gap="20px",
+            ),
+            card(
+                ui.div("Kinship-PC Covariates (per model)", class_="section-title"),
+                ui.p('Number of top kinship eigenvectors used as fixed “Q” structure covariates. Set to 0 to disable.'),
+                ui.layout_columns(
+                    slider("mlm_n_pca", "MLM — kinship PCs", 0, 10, 3, 1),
+                    slider("gemma_n_pca", "GEMMA — kinship PCs", 0, 10, 0, 1),
+                    slider("mrmlm_n_pca", "mrMLM — kinship PCs", 0, 10, 3, 1),
+                    slider("fastmrmlm_n_pca", "FASTmrMLM — kinship PCs", 0, 10, 3, 1),
+                    col_widths=[3,3,3,3], gap="15px",
+                ),
+            ),
+        ),
+        ui.nav_panel(
+            "3. Plot Customization",
+            ui.div("Manhattan updates live after a completed GWAS run; changing these settings does not re-fit models.", class_="info-box"),
+            ui.accordion(
+                ui.accordion_panel("Manhattan Plot Options",
+                    ui.input_checkbox("mh_show_logp", "Show -log₁₀(p) on secondary right axis", True),
+                    ui.layout_columns(
+                        slider("mh_w", "Width", 8,24,16,1), slider("mh_h", "Height",3,12,5,.5), slider("mh_fs", "Font Size",6,18,9,1),
+                        input_color("mh_fc", "Font Color", "#2D3142"), input_color("mh_sig", "Bonferroni Line Color", "#E15759"), input_color("mh_sug", "Suggestive Line Color", "#4E79A7"),
+                        slider("mh_ms", "Marker Size",2,60,12,1), slider("mh_alpha", "Marker Alpha",.1,1,.75,.05),
+                        input_color("mh_bg", "Background Color", "#FFFFFF"), input_color("mh_panel", "Panel Color", "#FAFBFF"), input_color("mh_dot", "Dot Color", "#4E79A7"),
+                        col_widths=[4,4,4], gap="15px",
+                    ), open=True,
+                ),
+                ui.accordion_panel("QQ Plot Options",
+                    ui.layout_columns(
+                        slider("qq_w", "Width",5,16,7,.5), slider("qq_h", "Height",5,16,7,.5), slider("qq_fs", "Font Size",6,18,10,1),
+                        input_color("qq_fc", "Font Color", "#2D3142"), slider("qq_ms", "Marker Size",5,80,22,1),
+                        input_color("qq_dot", "Dot Color", "#A78BFA"), input_color("qq_line", "Regression Line Color", "#E15759"), input_color("qq_fill", "CI Fill Color", "#A78BFA"),
+                        input_color("qq_bg", "Background Color", "#FFFFFF"), input_color("qq_panel", "Panel Color", "#FAFBFF"),
+                        col_widths=[4,4,4], gap="15px",
+                    ),
+                ),
+                ui.accordion_panel("Circos Plot Options (Density Ring)",
+                    ui.div("Outer band = SNP density heatmap per chromosome. Inner rings show selected model results.", class_="info-box"),
+                    ui.input_checkbox_group("nc_models", "Models to show", choices=ALL_MODELS, selected=["OLS","MLM","EMMAX","FarmCPU","GEMMA"]),
+                    ui.input_radio_buttons("nc_theme", "Color Theme", choices=["Bright","Dark"], selected="Bright", inline=True),
+                    ui.layout_columns(
+                        slider("nc_rings_per_panel", "Rings per panel",2,4,3,1), slider("nc_w", "Width",10,30,20,1), slider("nc_h", "Height",10,30,20,1), slider("nc_fs", "Font Size",6,22,11,1),
+                        col_widths=[3,3,3,3], gap="15px"),
+                ),
+                ui.accordion_panel("LD Decay Options",
+                    ui.layout_columns(slider("ld_w","Width",8,24,16,1),slider("ld_h","Height",3,12,6,.5),slider("ld_fs","Font Size",6,18,9,1),input_color("ld_dot","Dot Color","#4E79A7"),input_color("ld_line","Trend Line Color","#E15759"),col_widths=[3,3,3,3,3],gap="15px")),
+                ui.accordion_panel("PCA Options",
+                    ui.layout_columns(slider("pc_w","Width",8,22,14,1),slider("pc_h","Height",4,14,10,1),slider("pc_fs","Font Size",6,18,9,1),col_widths=[4,4,4],gap="15px")),
+                ui.accordion_panel("Kinship / Dendrogram Options",
+                    ui.layout_columns(slider("ki_w","Width",8,22,14,1),slider("ki_h","Height",6,20,12,1),slider("ki_fs","Font Size",6,18,9,1),input_color("ki_dot","Dot/Bar Color","#4E79A7"),input_color("ki_bg","Background Color","#FFFFFF"),input_color("ki_panel","Panel Color","#FAFBFF"),col_widths=[4,4,4],gap="15px")),
+                ui.accordion_panel("Effect Sizes Options",
+                    ui.layout_columns(slider("ef_w","Width",8,22,14,1),slider("ef_h","Height",5,18,10,1),slider("ef_fs","Font Size",6,18,9,1),input_color("ef_pos","Positive Effect Color","#4E79A7"),input_color("ef_neg","Negative Effect Color","#E15759"),input_color("ef_fill","Distribution Fill Color","#A78BFA"),input_color("ef_bg","Background Color","#FFFFFF"),col_widths=[4,4,4],gap="15px")),
+                ui.accordion_panel("All-Models Manhattan Options",
+                    ui.layout_columns(slider("co_w","Width",8,24,16,1),slider("co_h","Height per model",2,8,3.5,.5),input_color("co_sig","Bonferroni Line Color","#E15759"),input_color("co_sug","Suggestive Line Color","#4E79A7"),col_widths=[3,3,3,3],gap="15px")),
+                ui.accordion_panel("Dashboard Options",
+                    ui.layout_columns(slider("db_w","Width",8,24,15,1),slider("db_h","Height",5,18,10,1),input_color("db_dot","Bar/Dot Color","#4E79A7"),col_widths=[4,4,4],gap="15px")),
+            ),
+        ),
+        ui.nav_panel(
+            "4. Results",
+            ui.navset_tab(
+                ui.nav_panel("Manhattan", ui.output_image("img1", width="100%", height="650px")),
+                ui.nav_panel("QQ Primary", ui.output_image("img2", width="100%", height="650px")),
+                ui.nav_panel("QQ All Models", ui.output_image("img3", width="100%", height="650px")),
+                ui.nav_panel("QQ Overlay", ui.output_image("img4", width="100%", height="650px")),
+                ui.nav_panel("LD Decay", ui.output_image("img5", width="100%", height="650px")),
+                ui.nav_panel("PCA", ui.output_image("img6", width="100%", height="850px")),
+                ui.nav_panel("Kinship", ui.output_image("img7", width="100%", height="850px")),
+                ui.nav_panel("Effect Sizes", ui.output_image("img8", width="100%", height="850px")),
+                ui.nav_panel("All Models MH", ui.output_image("img9", width="100%", height="650px")),
+                ui.nav_panel("Dashboard", ui.output_image("img10", width="100%", height="850px")),
+                ui.nav_panel("Circos (Density)", ui.output_image("img11", width="100%", height="850px")),
+            ),
+        ),
+        ui.nav_panel(
+            "5. Compare Models",
+            ui.div("Run the pipeline first. This tab reuses cached model results and does not re-fit any model.", class_="info-box"),
+            ui.layout_columns(
+                card(
+                    ui.div("Comparison Settings", class_="section-title"),
+                    ui.input_checkbox_group("cmp_models", "Models to compare", choices=ALL_MODELS, selected=["OLS","MLM","EMMAX","FarmCPU","GEMMA"]),
+                    ui.input_radio_buttons("cmp_mode", "Significance definition", choices=["LOD (permutation) — recommended","Bonferroni (0.05/m)","Top-N rank"], selected="LOD (permutation) — recommended"),
+                    slider("cmp_top_n", "N / fallback Top-N",5,50,15,1),
+                    ui.layout_columns(slider("cmp_w","Width",10,24,16,1),slider("cmp_h","Height",6,16,10,1),slider("cmp_fs","Font Size",6,16,10,1),col_widths=[4,4,4],gap="10px"),
+                    ui.input_action_button("cmp_btn", "Find Common MTAs"),
+                ),
+                card(ui.output_image("cmp_img", width="100%", height="700px")),
+                col_widths=[4,8], gap="20px",
+            ),
+            ui.div("Shared / Unique MTA Table", class_="section-title"),
+            ui.output_data_frame("cmp_table"),
+            ui.layout_columns(ui.download_button("cmp_fig_dl","Download Common-MTA Figure"), ui.download_button("cmp_table_dl","Download Common-MTA Table"), col_widths=[6,6]),
+        ),
+    ),
+)
 
-                    with gr.Group(elem_classes=["gwas-card"]):
-                        gr.HTML('<div class="section-title">Downloads</div>')
-                        excel_out = gr.File(label="Excel (MTAs · Thresholds · PVE · QTN · All Models)", interactive=False)
-                        zip_out  = gr.File(label="All Plots as PNG (ZIP)", interactive=False)
-                        summary_txt_out = gr.File(label="Summary (TXT)", interactive=False)
 
-                with gr.Column(scale=2):
-                    with gr.Group(elem_classes=["gwas-card"]):
-                        gr.HTML('<div class="section-title">Analysis Summary + Threshold Explanations</div>')
-                        summary_out = gr.Textbox(label="", lines=32, show_label=False, elem_classes=["summary-box"])
+def _as_file_obj(file_value):
+    """Convert Shiny's input_file() result to the .name interface used by parse_data()."""
+    if not file_value:
+        return None
+    f = file_value[0]
+    return SimpleNamespace(name=f["datapath"])
 
-        # ══════════════════════ TAB 2 — COFACTORS / ADVANCED ═══════════════
-        with gr.Tab("2. Cofactors / Advanced"):
-            gr.HTML('<div class="info-box tip">Left group: only affects the multi-locus models '
-                    '(FarmCPU, BLINK, mrMLM, FASTmrMLM). Right group: kinship-PC covariates, used by '
-                    'MLM, mrMLM, FASTmrMLM and GEMMA if selected on Tab 1.</div>')
-            with gr.Row(equal_height=False):
-                with gr.Column():
-                    with gr.Group(elem_classes=["gwas-card"]):
-                        gr.HTML('<div class="section-title">'
-                                '<span class="model-chip chip-FarmCPU">FarmCPU</span>'
-                                '<span class="model-chip chip-BLINK">BLINK</span> Pseudo-QTN Iteration</div>')
-                        iter_max_iter = gr.Slider(2, 15, 8, 1,
-                            label="Max FEM/REM iterations (both FarmCPU & BLINK)")
-                        farmcpu_bin_size = gr.Slider(100_000, 5_000_000, 1_000_000, 100_000,
-                            label="FarmCPU bin size (bp) — pseudo-QTN spacing")
-                        blink_ld_r2 = gr.Slider(0.1, 0.99, 0.7, 0.01,
-                            label="BLINK LD r² pruning cutoff (higher = keeps more nearby pseudo-QTNs)")
-                with gr.Column():
-                    with gr.Group(elem_classes=["gwas-card"]):
-                        gr.HTML('<div class="section-title">'
-                                '<span class="model-chip chip-mrMLM">mrMLM</span>'
-                                '<span class="model-chip chip-FASTmrMLM">FASTmrMLM</span> Two-Stage Screening</div>')
-                        mrmlm_screen_thresh = gr.Slider(0.001, 0.05, 0.01, 0.001,
-                            label="Stage-1 screening p-value threshold")
-                        mrmlm_max_candidates = gr.Slider(5, 40, 20, 1,
-                            label="Max candidate QTNs carried into Stage 2")
-                        mrmlm_drop_thresh = gr.Slider(0.01, 0.2, 0.05, 0.01,
-                            label="Stage-2 backward-elimination drop threshold")
-            with gr.Row(equal_height=False):
-                with gr.Column():
-                    with gr.Group(elem_classes=["gwas-card"]):
-                        gr.HTML('<div class="section-title">Kinship-PC Covariates (per model)</div>')
-                        gr.HTML('<p class="info-box">Number of top kinship eigenvectors used as fixed '
-                                '"Q"structure covariates for each model that supports them. '
-                                'Only applies to a model if it\'s also selected on Tab 1. Set to 0 to disable.</p>')
-                        with gr.Row():
-                            mlm_n_pca = gr.Slider(0, 10, 3, 1,
-                                label="MLM — kinship PCs")
-                            gemma_n_pca = gr.Slider(0, 10, 0, 1,
-                                label="GEMMA — kinship PCs")
-                        with gr.Row():
-                            mrmlm_n_pca = gr.Slider(0, 10, 3, 1,
-                                label="mrMLM — kinship PCs")
-                            fastmrmlm_n_pca = gr.Slider(0, 10, 3, 1,
-                                label="FASTmrMLM — kinship PCs")
 
-        # ══════════════════════ TAB 3 — PLOT CUSTOMIZATION ══════════════════
-        with gr.Tab("3. Plot Customization"):
-            gr.HTML('<div class="section-title">Plot Styling — Manhattan updates live as you adjust it</div>')
+def _num(input, name):
+    return input[name]()
 
-            with gr.Accordion("Manhattan Plot Options (live preview — no re-run needed)", open=True):
-                gr.HTML('<p class="info-box">Left axis = LOD score (used to select MTAs). '
-                        'Right axis = -log₁₀(p), optional. Bonferroni and suggestive '
-                        'thresholds are always shown. Changes here update the plot instantly.</p>')
-                mh_show_logp = gr.Checkbox(value=True, label="Show -log₁₀(p) on secondary right axis")
-                with gr.Row():
-                    mh_w  = gr.Slider(8, 24, 16, 1,  label="Width")
-                    mh_h  = gr.Slider(3, 12, 5,  0.5, label="Height")
-                    mh_fs  = gr.Slider(6, 18, 9,  1,  label="Font Size")
-                with gr.Row():
-                    mh_fc  = gr.ColorPicker(value="#2D3142", label="Font Color")
-                    mh_sig  = gr.ColorPicker(value="#E15759", label="Bonferroni Line Color")
-                    mh_sug  = gr.ColorPicker(value="#4E79A7", label="Suggestive Line Color")
-                with gr.Row():
-                    mh_ms  = gr.Slider(2, 60, 12, 1, label="Marker Size")
-                    mh_alpha= gr.Slider(0.1, 1.0, 0.75, 0.05, label="Marker Alpha")
-                with gr.Row():
-                    mh_bg  = gr.ColorPicker(value="#FFFFFF", label="Background Color")
-                    mh_panel= gr.ColorPicker(value="#FAFBFF", label="Panel Color")
-                    mh_dot  = gr.ColorPicker(value="#4E79A7", label="Dot Color (overridden by chr colors)")
 
-            with gr.Accordion("QQ Plot Options", open=False):
-                gr.HTML('<p class="info-box">QQ plots include 95% CI band, regression line (slope + R²), and λ inflation factor.</p>')
-                with gr.Row():
-                    qq_w  = gr.Slider(5, 16, 7,  0.5, label="Width")
-                    qq_h  = gr.Slider(5, 16, 7,  0.5, label="Height")
-                    qq_fs = gr.Slider(6, 18, 10,  1,  label="Font Size")
-                with gr.Row():
-                    qq_fc  = gr.ColorPicker(value="#2D3142", label="Font Color")
-                    qq_ms  = gr.Slider(5, 80, 22, 1,  label="Marker Size")
-                with gr.Row():
-                    qq_dot  = gr.ColorPicker(value="#A78BFA", label="Dot Color")
-                    qq_line = gr.ColorPicker(value="#E15759", label="Regression Line Color")
-                    qq_fill = gr.ColorPicker(value="#A78BFA", label="CI Fill Color")
-                with gr.Row():
-                    qq_bg  = gr.ColorPicker(value="#FFFFFF", label="Background Color")
-                    qq_panel= gr.ColorPicker(value="#FAFBFF", label="Panel Color")
-
-            with gr.Accordion("Circos Plot Options (Density Ring)", open=False):
-                gr.HTML('<p class="info-box">Outer band = SNP density heatmap per chromosome '
-                        '(grey→green→yellow→orange→red). Each inner ring is one model, '
-                        'shown as a solid-colour peak silhouette with a red dotted significance '
-                        'circle and red-star hits. Rings are grouped into lettered panels (A–D).</p>')
-                nc_models = gr.CheckboxGroup(
-                    choices=ALL_MODELS, value=["OLS", "MLM", "EMMAX", "FarmCPU", "GEMMA"],
-                    label="Models to show as circos rings (only models selected/run above can appear)")
-                with gr.Row():
-                    nc_theme = gr.Radio(choices=["Bright", "Dark"], value="Bright", label="Color Theme")
-                    nc_rings_per_panel = gr.Slider(2, 4, 3, 1, label="Rings per panel (groups models into A/B/C/D)")
-                with gr.Row():
-                    nc_w  = gr.Slider(10, 30, 20, 1, label="Width (per panel)")
-                    nc_h  = gr.Slider(10, 30, 20, 1, label="Height (per panel)")
-                    nc_fs = gr.Slider(6, 22, 11, 1, label="Font Size")
-
-            with gr.Accordion("LD Decay Options", open=False):
-                with gr.Row():
-                    ld_w  = gr.Slider(8, 24, 16, 1,  label="Width")
-                    ld_h  = gr.Slider(3, 12, 6,  0.5, label="Height")
-                    ld_fs  = gr.Slider(6, 18, 9,  1,  label="Font Size")
-                with gr.Row():
-                    ld_dot  = gr.ColorPicker(value="#4E79A7", label="Dot Color")
-                    ld_line = gr.ColorPicker(value="#E15759", label="Trend Line Color")
-
-            with gr.Accordion("PCA Options (Dark Theme)", open=False):
-                gr.HTML('<p class="info-box">PCA uses a dark background by design. Scree plot removed. Showing PC1v2, PC2v3, Population Structure.</p>')
-                with gr.Row():
-                    pc_w  = gr.Slider(8, 22, 14, 1,  label="Width")
-                    pc_h  = gr.Slider(4, 14, 10, 1,  label="Height")
-                    pc_fs  = gr.Slider(6, 18, 9,  1,  label="Font Size")
-
-            with gr.Accordion("Kinship / Dendrogram Options", open=False):
-                gr.HTML('<p class="info-box">For >50 samples, dendrogram auto-truncates to last 30 nodes.</p>')
-                with gr.Row():
-                    ki_w  = gr.Slider(8, 22, 14, 1,  label="Width")
-                    ki_h  = gr.Slider(6, 20, 12, 1,  label="Height")
-                    ki_fs  = gr.Slider(6, 18, 9,  1,  label="Font Size")
-                with gr.Row():
-                    ki_dot  = gr.ColorPicker(value="#4E79A7", label="Dot/Bar Color")
-                    ki_bg  = gr.ColorPicker(value="#FFFFFF",  label="Background Color")
-                    ki_panel= gr.ColorPicker(value="#FAFBFF",  label="Panel Color")
-
-            with gr.Accordion("Effect Sizes Options", open=False):
-                with gr.Row():
-                    ef_w  = gr.Slider(8, 22, 14, 1,  label="Width")
-                    ef_h  = gr.Slider(5, 18, 10, 1,  label="Height")
-                    ef_fs  = gr.Slider(6, 18, 9,  1,  label="Font Size")
-                with gr.Row():
-                    ef_pos  = gr.ColorPicker(value="#4E79A7", label="Positive Effect Color")
-                    ef_neg  = gr.ColorPicker(value="#E15759", label="Negative Effect Color")
-                    ef_fill = gr.ColorPicker(value="#A78BFA", label="Distribution Fill Color")
-                    ef_bg  = gr.ColorPicker(value="#FFFFFF",  label="Background Color")
-
-            with gr.Accordion("All-Models Manhattan Options", open=False):
-                gr.HTML('<p class="info-box">Both thresholds shown on each model subplot.</p>')
-                with gr.Row():
-                    co_w  = gr.Slider(8, 24, 16, 1,  label="Width")
-                    co_h  = gr.Slider(2, 8,  3.5, 0.5, label="Height per model")
-                with gr.Row():
-                    co_sig  = gr.ColorPicker(value="#E15759", label="Bonferroni Line Color")
-                    co_sug  = gr.ColorPicker(value="#4E79A7", label="Suggestive Line Color")
-
-            with gr.Accordion("Dashboard Options", open=False):
-                with gr.Row():
-                    db_w  = gr.Slider(8, 24, 15, 1,  label="Width")
-                    db_h  = gr.Slider(5, 18, 10, 1,  label="Height")
-                    db_dot = gr.ColorPicker(value="#4E79A7", label="Bar/Dot Color")
-
-        # ══════════════════════ TAB 4 — RESULTS ═════════════════════════════
-        with gr.Tab("4. Results"):
-            gr.HTML('<div class="section-title">Visualizations</div>')
-            with gr.Tabs():
-                with gr.Tab("Manhattan"):
-                    img1  = gr.Image(type="pil", label="Manhattan — Primary Model (chr. labels, Bonferroni + suggestive thresholds, filled markers = top MTAs — updates live)")
-                with gr.Tab("QQ Primary"):
-                    img2  = gr.Image(type="pil", label="QQ Plot — regression line, 95% CI, λ inflation factor")
-                with gr.Tab("QQ All Models"):
-                    img3  = gr.Image(type="pil", label="QQ Plots — All Models with Regression")
-                with gr.Tab("QQ Overlay"):
-                    img4  = gr.Image(type="pil", label="QQ Overlay (solid=obs, dashed=regression per model)")
-                with gr.Tab("LD Decay"):
-                    img5  = gr.Image(type="pil", label="LD Decay (bp & Mb)")
-                with gr.Tab("PCA (Dark)"):
-                    img6  = gr.Image(type="pil", label="PCA — Dark theme (PC1v2, PC2v3, Population Structure)")
-                with gr.Tab("Kinship"):
-                    img7  = gr.Image(type="pil", label="Kinship & Dendrogram")
-                with gr.Tab("Effect Sizes"):
-                    img8  = gr.Image(type="pil", label="Effect Sizes & Volcano Plot")
-                with gr.Tab("All Models MH"):
-                    img9 = gr.Image(type="pil", label="All-Models Manhattan (Chr labels · both thresholds)")
-                with gr.Tab("Dashboard"):
-                    img10 = gr.Image(type="pil", label="Summary Dashboard (Threshold table replaces Scree plot)")
-                with gr.Tab("Circos (Density)"):
-                    img11 = gr.Image(type="pil", label="Circos — Density Ring + Multi-Model Rings (lettered panels)")
-
-        # ══════════════════════ TAB 5 — COMPARE MODELS ══════════════════════
-        with gr.Tab("5. Compare Models"):
-            gr.HTML('<div class="info-box tip">Run the pipeline on Tab 1 first. This tab reuses those cached '
-                    'results — it does not re-fit any model — to find which MTAs (marker-trait associations) '
-                    'are shared across the models you pick below.</div>')
-            with gr.Row(equal_height=False):
-                with gr.Column(scale=1, min_width=300):
-                    with gr.Group(elem_classes=["gwas-card"]):
-                        gr.HTML('<div class="section-title">Comparison Settings</div>')
-                        cmp_models = gr.CheckboxGroup(
-                            choices=ALL_MODELS, value=["OLS", "MLM", "EMMAX", "FarmCPU", "GEMMA"],
-                            label="Models to compare (must have been run on Tab 1)")
-                        cmp_mode = gr.Radio(
-                            choices=["LOD (permutation) — recommended", "Bonferroni (0.05/m)", "Top-N rank"],
-                            value="LOD (permutation) — recommended", label="Significance definition")
-                        cmp_top_n = gr.Slider(5, 50, 15, 1, label="N (used only if 'Top-N rank' selected, or as fallback if LOD threshold unavailable)")
-                        with gr.Row():
-                            cmp_w  = gr.Slider(10, 24, 16, 1, label="Width")
-                            cmp_h  = gr.Slider(6, 16, 10, 1,  label="Height")
-                            cmp_fs = gr.Slider(6, 16, 10, 1,  label="Font Size")
-                        cmp_btn = gr.Button("Find Common MTAs", elem_classes=["secondary"])
-                with gr.Column(scale=2):
-                    cmp_img = gr.Image(type="pil", label="Consensus-degree bar chart + overlaid consensus Manhattan (gold markers = common to ALL selected models)")
-            gr.HTML('<div class="section-title">Shared / Unique MTA Table</div>')
-            cmp_table = gr.Dataframe(label="", wrap=True)
-            with gr.Row():
-                cmp_fig_dl  = gr.File(label="Download Common-MTA Figure (PNG, 400 dpi)", interactive=False)
-                cmp_table_dl = gr.File(label="Download Common-MTA Table (XLSX)", interactive=False)
-
-    all_inputs = [
-        file_in, text_in, model_sel, maf_thr, top_n_sl, n_perm,
-        lod_thr_manual, pve_thr,
-        # Cofactors / advanced
-        iter_max_iter, farmcpu_bin_size, blink_ld_r2,
-        mrmlm_screen_thresh, mrmlm_max_candidates, mrmlm_drop_thresh,
-        mlm_n_pca, mrmlm_n_pca, fastmrmlm_n_pca, gemma_n_pca,
-        # Manhattan
-        mh_w, mh_h, mh_fs, mh_fc, mh_ms, mh_alpha, mh_bg, mh_sig, mh_sug,
-        mh_dot, mh_panel, mh_show_logp,
-        # QQ
-        qq_w, qq_h, qq_fs, qq_fc, qq_ms, qq_dot, qq_line, qq_fill, qq_bg, qq_panel,
-        # Circos (density ring)
-        nc_models, nc_theme, nc_rings_per_panel, nc_w, nc_h, nc_fs,
-        # LD
-        ld_w, ld_h, ld_fs, ld_dot, ld_line,
-        # PCA
-        pc_w, pc_h, pc_fs,
-        # Kinship
-        ki_w, ki_h, ki_fs, ki_dot, ki_bg, ki_panel,
-        # Effect
-        ef_w, ef_h, ef_fs, ef_pos, ef_neg, ef_fill, ef_bg,
-        # Comparison
-        co_w, co_h, co_sig, co_sug,
-        # Dashboard
-        db_w, db_h, db_dot,
+def _run_args(input):
+    return [
+        _as_file_obj(input.file_in()), input.text_in(), input.model_sel(), _num(input,"maf_thr"), _num(input,"top_n_sl"), _num(input,"n_perm"),
+        _num(input,"lod_thr_manual"), _num(input,"pve_thr"),
+        _num(input,"iter_max_iter"), _num(input,"farmcpu_bin_size"), _num(input,"blink_ld_r2"),
+        _num(input,"mrmlm_screen_thresh"), _num(input,"mrmlm_max_candidates"), _num(input,"mrmlm_drop_thresh"),
+        _num(input,"mlm_n_pca"), _num(input,"mrmlm_n_pca"), _num(input,"fastmrmlm_n_pca"), _num(input,"gemma_n_pca"),
+        _num(input,"mh_w"), _num(input,"mh_h"), _num(input,"mh_fs"), input.mh_fc(), _num(input,"mh_ms"), _num(input,"mh_alpha"), input.mh_bg(), input.mh_sig(), input.mh_sug(), input.mh_dot(), input.mh_panel(), input.mh_show_logp(),
+        _num(input,"qq_w"), _num(input,"qq_h"), _num(input,"qq_fs"), input.qq_fc(), _num(input,"qq_ms"), input.qq_dot(), input.qq_line(), input.qq_fill(), input.qq_bg(), input.qq_panel(),
+        input.nc_models(), input.nc_theme(), _num(input,"nc_rings_per_panel"), _num(input,"nc_w"), _num(input,"nc_h"), _num(input,"nc_fs"),
+        _num(input,"ld_w"), _num(input,"ld_h"), _num(input,"ld_fs"), input.ld_dot(), input.ld_line(),
+        _num(input,"pc_w"), _num(input,"pc_h"), _num(input,"pc_fs"),
+        _num(input,"ki_w"), _num(input,"ki_h"), _num(input,"ki_fs"), input.ki_dot(), input.ki_bg(), input.ki_panel(),
+        _num(input,"ef_w"), _num(input,"ef_h"), _num(input,"ef_fs"), input.ef_pos(), input.ef_neg(), input.ef_fill(), input.ef_bg(),
+        _num(input,"co_w"), _num(input,"co_h"), input.co_sig(), input.co_sug(),
+        _num(input,"db_w"), _num(input,"db_h"), input.db_dot(),
     ]
 
-    run_btn.click(
-        run_gwas,
-        inputs=all_inputs,
-        outputs=[img1, img2, img3, img4, img5, img6, img7,
-                 img8, img9, img10, img11, excel_out, zip_out,
-                 summary_txt_out, summary_out, cache_state]
-    )
 
-    # ── Live Manhattan recolor: any change below redraws img1 instantly ─────
-    live_mh_inputs = [cache_state, mh_w, mh_h, mh_fs, mh_fc, mh_ms, mh_alpha,
-                       mh_bg, mh_sig, mh_sug, mh_dot, mh_panel]
-    for comp in [mh_w, mh_h, mh_fs, mh_fc, mh_ms, mh_alpha, mh_bg, mh_sig,
-                 mh_sug, mh_dot, mh_panel]:
-        comp.change(refresh_manhattan_live, inputs=live_mh_inputs, outputs=[img1])
+def _save_images(imgs, directory):
+    paths=[]
+    Path(directory).mkdir(parents=True, exist_ok=True)
+    for i, im in enumerate(imgs, 1):
+        if im is None:
+            paths.append(None); continue
+        p=Path(directory)/f"plot_{i:02d}.png"
+        im.save(p)
+        paths.append(str(p))
+    return paths
 
-    # ── Compare Models tab ───────────────────────────────────────────────────
-    cmp_btn.click(
-        run_compare_models,
-        inputs=[cache_state, cmp_models, cmp_mode, cmp_top_n, cmp_w, cmp_h, cmp_fs],
-        outputs=[cmp_img, cmp_table, cmp_fig_dl, cmp_table_dl]
-    )
 
-if __name__ == "__main__":
-    demo.launch(share=False, server_port=7860)
+def server(input: Inputs, output: Outputs, session: Session):
+    state = reactive.value({})
+    output_paths = reactive.value([])
+    comparison = reactive.value({})
+
+    @reactive.effect
+    @reactive.event(input.run_btn)
+    def _run():
+        try:
+            result = run_gwas(*_run_args(input))
+            if len(result) >= 16 and isinstance(result[-1], dict):
+                imgs = result[:11]
+                paths = _save_images(imgs, tempfile.mkdtemp(prefix="shiny_gwas_plots_"))
+                result[ -1 ]["_image_paths"] = paths
+                state.set(result[-1])
+                output_paths.set(result)
+            else:
+                state.set({"error": str(result[-1]) if result else "GWAS failed."})
+                output_paths.set([])
+        except Exception as exc:
+            state.set({"error": f"GWAS pipeline error: {exc}"})
+            output_paths.set([])
+
+    @render.text
+    def summary_out():
+        st = state.get()
+        if not st:
+            return "Ready. Configure the analysis and click Run Complete GWAS Pipeline."
+        if "error" in st:
+            return st["error"]
+        vals = output_paths.get()
+        return vals[13] if len(vals) > 13 else "Pipeline completed."
+
+    def image_output(index):
+        @render.image
+        def _image():
+            paths = state.get().get("_image_paths", [])
+            if len(paths) >= index and paths[index-1]:
+                return {"src": paths[index-1], "width": "100%", "alt": f"GWAS plot {index}"}
+            return None
+        return _image
+
+    # Register the eleven plot renderers using the output IDs expected by the UI.
+    for idx, oid in enumerate(["img1","img2","img3","img4","img5","img6","img7","img8","img9","img10","img11"], 1):
+        fn = image_output(idx)
+        fn.__name__ = oid
+        render.image(fn)
+
+    @reactive.effect
+    def _live_manhattan():
+        st = state.get()
+        if not st or "primary_p" not in st:
+            return
+        # Read the customization inputs so Shiny invalidates this effect when
+        # any Manhattan setting changes; this does NOT call any GWAS model.
+        vals = [input.mh_w(),input.mh_h(),input.mh_fs(),input.mh_fc(),input.mh_ms(),input.mh_alpha(),input.mh_bg(),input.mh_sig(),input.mh_sug(),input.mh_dot(),input.mh_panel(),input.mh_show_logp()]
+        fig = plot_manhattan(st["primary_p"], st["chr_filt"], st["pos_filt"], "Manhattan Plot", st["primary_model"],
+                             build_cfg(vals[0],vals[1],vals[2],vals[3],bg=vals[6],panel=vals[10],sig_col=vals[7],sug_col=vals[8],marker_size=vals[4],alpha=vals[5],dot_col=vals[9]),
+                             st["top_n"], lod_threshold=st.get("lod_threshold"), pve_vals=st.get("pve_vals"), pve_threshold=st.get("pve_threshold"), show_logp_axis=bool(vals[11]))
+        p=Path(tempfile.mkdtemp(prefix="shiny_manhattan_"))/"manhattan.png"
+        fig.savefig(p, dpi=RENDER_DPI, bbox_inches="tight", facecolor=fig.get_facecolor()); plt.close(fig)
+        paths=list(st.get("_image_paths", []))
+        if paths:
+            paths[0]=str(p)
+            st["_image_paths"]=paths
+            state.set(st)
+
+    @reactive.effect
+    @reactive.event(input.cmp_btn)
+    def _compare():
+        st=state.get()
+        if not st or "all_results" not in st:
+            comparison.set({"error":"Run the pipeline first."})
+            return
+        try:
+            img, df, fig_path, table_path = run_compare_models(st, input.cmp_models(), input.cmp_mode(), int(input.cmp_top_n()), input.cmp_w(), input.cmp_h(), input.cmp_fs())
+            paths=[]
+            if img is not None:
+                p=Path(tempfile.mkdtemp(prefix="shiny_compare_"))/"common_MTA_figure.png"
+                img.save(p); paths.append(str(p))
+            comparison.set({"img":paths[0] if paths else None,"df":df,"fig":fig_path,"table":table_path})
+        except Exception as exc:
+            comparison.set({"error":f"Comparison error: {exc}"})
+
+    @render.image
+    def cmp_img():
+        c=comparison.get()
+        return {"src":c["img"],"width":"100%","alt":"Common MTA comparison"} if c.get("img") else None
+
+    @render.data_frame
+    def cmp_table():
+        c=comparison.get()
+        if c.get("df") is not None:
+            return render.DataGrid(c["df"], width="100%", height="500px")
+        return render.DataGrid(pd.DataFrame())
+
+    def _download_path(key):
+        async def _download():
+            vals=output_paths.get()
+            path=vals[key] if len(vals)>key else None
+            if path and os.path.exists(path):
+                with open(path,"rb") as f:
+                    yield f.read()
+        return _download
+
+    # output_paths indices from run_gwas: 11 Excel, 12 ZIP, 13 TXT, 14 summary.
+    for oid, key, filename in [("excel_dl",11,"gwas_results_top15.xlsx"),("zip_dl",12,"gwas_plots.zip"),("summary_dl",13,"gwas_summary.txt")]:
+        fn = _download_path(key)
+        fn.__name__ = oid
+        render.download_button(fn, filename=filename)
+
+    @render.download_button(filename="common_MTA_figure.png")
+    async def cmp_fig_dl():
+        p=comparison.get().get("fig")
+        if p and os.path.exists(p):
+            with open(p,"rb") as f: yield f.read()
+
+    @render.download_button(filename="common_MTA_table.xlsx")
+    async def cmp_table_dl():
+        p=comparison.get().get("table")
+        if p and os.path.exists(p):
+            with open(p,"rb") as f: yield f.read()
+
+
+app = App(app_ui, server)
