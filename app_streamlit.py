@@ -3084,16 +3084,17 @@ run = st.button("Run Complete GWAS Pipeline", type="primary", use_container_widt
 
 if run:
     if uploaded is not None:
-        class UploadedWrapper:
-            def __init__(self, obj):
-                self.name = obj.name
-        # parse_data() needs a filesystem path. Streamlit's uploaded file can
-        # be copied to a temporary file without changing the parser or GWAS code.
-        suffix = Path(uploaded.name).suffix or ".csv"
+        suffix = os.path.splitext(uploaded.name)[1] or ".csv"
         fd, temp_input_path = tempfile.mkstemp(suffix=suffix)
         os.close(fd)
+    
         with open(temp_input_path, "wb") as f:
             f.write(uploaded.getbuffer())
+    
+        class UploadedWrapper:
+            def __init__(self, path):
+                self.name = path
+    
         file_obj = UploadedWrapper(temp_input_path)
     else:
         file_obj = None
