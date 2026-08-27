@@ -2862,7 +2862,7 @@ st.markdown("""
         border-bottom: 3px solid #2B4C7E; border-radius: 6px;
         padding: 20px 26px; margin-bottom: 18px;
     }
-    .gwas-header h1 { margin: 0 0 4px 0; font-size: 1.7rem; }
+    .gwas-header h1 { margin: 0 0 4px 0; font-size: 1.7rem; color: #000000 !important; font-weight: 700; }
     .gwas-header p { color: #565D75; margin: 2px 0; }
     .section-title {
         font-size: .82rem; font-weight: 700; color: #1A1D29;
